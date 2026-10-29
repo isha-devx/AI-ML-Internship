@@ -1,138 +1,234 @@
-# Task 5: Decision Trees & Random Forests
+# Task 5: Decision Trees and Random Forests
 # AI/ML Internship
+
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+)
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 
 
 def main():
-    # Load dataset
-    # The CSV file includes a markdown-style description block before and after
-    # the actual tabular data, so we skip the metadata rows and keep only rows
-    # that actually contain valid numeric target values.
-    dataset = pd.read_csv("dataset.csv", skiprows=[0, 1], on_bad_lines="skip")
-    dataset = dataset.dropna(subset=["target"])
-    dataset = dataset.apply(pd.to_numeric, errors="coerce").dropna().reset_index(drop=True)
+    # 1. Load the dataset
+    csv_path = Path(__file__).resolve().parent / "dataset.csv"
+
+    if not csv_path.exists():
+        raise FileNotFoundError(f"Dataset not found: {csv_path}")
+
+    # The corrected CSV already contains headers on its first line.
+    dataset = pd.read_csv(csv_path, encoding="utf-8-sig")
+    dataset.columns = dataset.columns.str.strip()
+
+    if "target" not in dataset.columns:
+        raise ValueError(
+            "The CSV must contain a 'target' column. "
+            "Check that the first row contains the column headers."
+        )
+
+    # 2. Clean the data
+    dataset = dataset.replace("?", pd.NA)
+
+    for column in dataset.columns:
+        dataset[column] = pd.to_numeric(dataset[column], errors="coerce")
+
+    dataset = dataset.dropna().reset_index(drop=True)
+
+    if dataset.empty:
+        raise ValueError("The dataset contains no valid rows.")
 
     X = dataset.drop(columns=["target"])
-    y = dataset["target"]
+    y = dataset["target"].astype(int)
+
+    if y.nunique() < 2:
+        raise ValueError("The dataset must contain at least two target classes.")
+
+    if y.value_counts().min() < 2:
+        raise ValueError(
+            "Each target class needs at least two records for "
+            "a stratified train/test split."
+        )
 
     print("Dataset loaded successfully!")
     print("Dataset shape:", dataset.shape)
-    print("\nFirst 5 rows:")
+    print("\nFirst five rows:")
     print(dataset.head())
 
     print("\nTarget distribution:")
-    print(y.value_counts())
+    print(y.value_counts().sort_index())
 
-    # Split data. This dataset is extremely small and imbalanced, so fall back to a
-    # deterministic split when sklearn's stratified split would fail.
-    if y.nunique() < 2 or len(y) < 10:
-        print("\nDataset is too small for a standard stratified split; using a deterministic fallback split.")
-        minority_idx = y[y == y.min()].index[0]
-        majority_idx = y[y == y.max()].index[0]
-        test_idx = [minority_idx, majority_idx]
-        X_train = X.drop(index=test_idx)
-        X_test = X.loc[test_idx]
-        y_train = y.drop(index=test_idx)
-        y_test = y.loc[test_idx]
-    else:
-        X_train, X_test, y_train, y_test = train_test_split(
-            X,
-            y,
-            test_size=0.2,
-            random_state=42,
-            stratify=y,
-        )
+    # 3. Split into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42,
+        stratify=y,
+    )
 
-    print("\nTraining samples:", X_train.shape[0])
-    print("Testing samples:", X_test.shape[0])
+    print("\nTraining samples:", len(X_train))
+    print("Testing samples:", len(X_test))
 
-    # Decision Tree model
-    dt_model = DecisionTreeClassifier(random_state=42, max_depth=3)
+    # 4. Train and evaluate the Decision Tree
+    dt_model = DecisionTreeClassifier(
+        max_depth=3,
+        random_state=42,
+    )
     dt_model.fit(X_train, y_train)
 
     y_pred_dt = dt_model.predict(X_test)
     dt_accuracy = accuracy_score(y_test, y_pred_dt)
 
-    try:
-        dt_cv = cross_val_score(dt_model, X, y, cv=min(3, len(y))).mean()
-    except ValueError:
-        dt_cv = None
-
-    print("\nDecision Tree Model")
+    print("\nDecision Tree Results")
     print("---------------------")
     print(f"Accuracy: {dt_accuracy * 100:.2f}%")
-    if dt_cv is not None:
-        print(f"Cross-validation accuracy: {dt_cv * 100:.2f}%")
-    else:
-        print("Cross-validation accuracy: not available for this tiny dataset")
+
     print("\nClassification Report:")
-    print(classification_report(y_test, y_pred_dt, target_names=["No Heart Disease", "Heart Disease"]))
-    print("\nConfusion Matrix:")
+    print(
+        classification_report(
+            y_test,
+            y_pred_dt,
+            labels=dt_model.classes_,
+            zero_division=0,
+        )
+    )
+
+    print("Confusion Matrix:")
     print(confusion_matrix(y_test, y_pred_dt))
 
-    plt.figure(figsize=(18, 10))
+    ConfusionMatrixDisplay.from_predictions(
+        y_test,
+        y_pred_dt,
+        labels=dt_model.classes_,
+        cmap="Blues",
+    )
+    plt.title("Decision Tree - Confusion Matrix")
+    plt.tight_layout()
+    plt.show()
+
+    plt.figure(figsize=(20, 10))
     plot_tree(
         dt_model,
-        feature_names=X.columns,
-        class_names=["No Disease", "Disease"],
+        feature_names=X.columns.tolist(),
+        class_names=[str(label) for label in dt_model.classes_],
         filled=True,
         rounded=True,
+        fontsize=8,
     )
     plt.title("Decision Tree Visualization")
     plt.tight_layout()
     plt.show()
 
-    # Random Forest model
-    rf_model = RandomForestClassifier(n_estimators=200, random_state=42)
+    # 5. Train and evaluate the Random Forest
+    rf_model = RandomForestClassifier(
+        n_estimators=200,
+        random_state=42,
+    )
     rf_model.fit(X_train, y_train)
 
     y_pred_rf = rf_model.predict(X_test)
     rf_accuracy = accuracy_score(y_test, y_pred_rf)
 
-    try:
-        rf_cv = cross_val_score(rf_model, X, y, cv=min(3, len(y))).mean()
-    except ValueError:
-        rf_cv = None
-
-    print("\nRandom Forest Model")
-    print("-------------------")
+    print("\nRandom Forest Results")
+    print("---------------------")
     print(f"Accuracy: {rf_accuracy * 100:.2f}%")
-    if rf_cv is not None:
-        print(f"Cross-validation accuracy: {rf_cv * 100:.2f}%")
-    else:
-        print("Cross-validation accuracy: not available for this tiny dataset")
+
     print("\nClassification Report:")
-    print(classification_report(y_test, y_pred_rf, target_names=["No Heart Disease", "Heart Disease"]))
-    print("\nConfusion Matrix:")
+    print(
+        classification_report(
+            y_test,
+            y_pred_rf,
+            labels=rf_model.classes_,
+            zero_division=0,
+        )
+    )
+
+    print("Confusion Matrix:")
     print(confusion_matrix(y_test, y_pred_rf))
 
-    # Feature importance
-    feature_importance = pd.Series(rf_model.feature_importances_, index=X.columns).sort_values(ascending=False)
+    ConfusionMatrixDisplay.from_predictions(
+        y_test,
+        y_pred_rf,
+        labels=rf_model.classes_,
+        cmap="Greens",
+    )
+    plt.title("Random Forest - Confusion Matrix")
+    plt.tight_layout()
+    plt.show()
+
+    # 6. Cross-validation on training data only
+    min_class_count = int(y_train.value_counts().min())
+    cv_folds = min(5, min_class_count)
+
+    if cv_folds >= 2:
+        dt_cv = cross_val_score(
+            DecisionTreeClassifier(
+                max_depth=3,
+                random_state=42,
+            ),
+            X_train,
+            y_train,
+            cv=cv_folds,
+            scoring="accuracy",
+        )
+
+        rf_cv = cross_val_score(
+            RandomForestClassifier(
+                n_estimators=200,
+                random_state=42,
+            ),
+            X_train,
+            y_train,
+            cv=cv_folds,
+            scoring="accuracy",
+        )
+
+        print("\nCross-Validation Results")
+        print("------------------------")
+        print(f"Decision Tree: {dt_cv.mean() * 100:.2f}%")
+        print(f"Random Forest: {rf_cv.mean() * 100:.2f}%")
+    else:
+        print("\nCross-validation skipped: too few samples per class.")
+
+    # 7. Feature importance
+    feature_importance = pd.Series(
+        rf_model.feature_importances_,
+        index=X.columns,
+    ).sort_values(ascending=False)
 
     print("\nTop 10 Feature Importances:")
     print(feature_importance.head(10))
 
-    plt.figure(figsize=(10, 6))
-    feature_importance.head(10).plot(kind="bar", color="steelblue")
-    plt.title("Top 10 Features by Importance (Random Forest)")
-    plt.xlabel("Feature")
-    plt.ylabel("Importance")
+    feature_importance.head(10).sort_values().plot(
+        kind="barh",
+        figsize=(10, 6),
+    )
+    plt.title("Top 10 Features - Random Forest")
+    plt.xlabel("Importance")
+    plt.ylabel("Feature")
     plt.tight_layout()
     plt.show()
 
-    # Compare both models
+    # 8. Compare the models
     print("\nModel Comparison")
     print("----------------")
     print(f"Decision Tree Accuracy: {dt_accuracy * 100:.2f}%")
     print(f"Random Forest Accuracy: {rf_accuracy * 100:.2f}%")
-    print(f"Random Forest is better: {rf_accuracy > dt_accuracy}")
+
+    if rf_accuracy > dt_accuracy:
+        print("Random Forest performed better on this test set.")
+    elif dt_accuracy > rf_accuracy:
+        print("Decision Tree performed better on this test set.")
+    else:
+        print("Both models achieved the same test accuracy.")
 
     print("\nTask 5 completed successfully!")
 
