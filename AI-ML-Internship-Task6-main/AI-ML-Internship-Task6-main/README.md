@@ -1,69 +1,52 @@
-# AI-ML-Internship-Task6
-Implementation of K-Nearest Neighbors (KNN) for classification using the Iris dataset. Includes feature normalization, experimentation with different K values, evaluation using accuracy and confusion matrix, and visualization.
-# Task 6: K-Nearest Neighbors (KNN) Classification  
 
-## 🎯 Objective  
-Understand and implement KNN for classification problems.  
+# AI/ML Internship — Task 6: KNN Classification
 
-## 🛠 Tools Used  
-- Python  
-- Scikit-learn  
-- Pandas  
-- Matplotlib  
+## Objective
+Implement the K-Nearest Neighbors (KNN) algorithm to classify Iris flowers and evaluate its performance using different values of K.
 
-## 📂 Dataset  
-Used the **Iris dataset** (built-in in sklearn).  
+## Dataset
+- **Iris dataset**, loaded directly from scikit-learn.
+- 150 samples, 4 numerical features, and 3 flower classes.
 
-## 🚀 Steps Implemented  
-1. Loaded Iris dataset.  
-2. Normalized features using `StandardScaler`.  
-3. Applied **KNeighborsClassifier** from sklearn.  
-4. Experimented with different values of **K**.  
-5. Evaluated the model using accuracy score & confusion matrix.  
-6. Visualized decision boundaries for better understanding.  
+## Tools and Libraries
+- Python
+- Scikit-learn
+- Matplotlib
 
-## 📊 Results  
-- Best accuracy achieved at **K = 5**.  
-- Confusion matrix shows correct classification for most test samples.  
+## Implementation
+1. Loaded the Iris dataset.
+2. Split the dataset into training and testing sets.
+3. Standardized the features using `StandardScaler`, fitted only on the training data.
+4. Trained KNN classifiers using K = 3, 5, and 7.
+5. Compared the models using accuracy.
+6. Evaluated the final K=5 model using a confusion matrix.
 
-## 📚 Key Learnings  
-- Instance-based learning  
-- Role of Euclidean distance  
-- K selection and its impact  
+## Results
 
-## ❓ Interview Questions  
-1. **How does the KNN algorithm work?**  
-   - It classifies a data point based on majority voting from nearest neighbors.  
+| K | Test Accuracy |
+|---|---:|
+| 3 | 91.11% |
+| 5 | 91.11% |
+| 7 | 93.33% |
 
-2. **How do you choose the right K?**  
-   - Using experimentation/cross-validation. Odd K helps avoid ties.  
+The K=7 model achieved the highest test accuracy in this experiment. The final model and confusion matrix use K=5 for comparison.
 
-3. **Why is normalization important in KNN?**  
-   - Because distance metrics are scale-sensitive.  
+## Key Learnings
+- How KNN classifies samples using nearby data points.
+- Why feature scaling matters for distance-based algorithms.
+- How the choice of K affects classification performance.
+- How to evaluate a classifier using accuracy and a confusion matrix.
 
-4. **What is the time complexity of KNN?**  
-   - Training: O(1), Prediction: O(N × D).  
+## How to Run
 
-5. **Pros and Cons of KNN**  
-   - ✅ Simple, no training phase  
-   - ❌ Slow for large datasets, sensitive to noise  
+Install the required libraries:
 
-6. **Is KNN sensitive to noise?**  
-   - Yes, noisy data points can reduce accuracy.  
-
-7. **How does KNN handle multi-class problems?**  
-   - By majority voting among neighbors for each class.  
-
-8. **What’s the role of distance metrics in KNN?**  
-   - Defines similarity. Common: Euclidean, Manhattan, Minkowski.  
-
-## ▶️ How to Run  
 ```bash
-# Clone repo
-git clone https://github.com/your-username/KNN-Classification.git  
+pip install scikit-learn matplotlib
+```
 
-# Install libraries
-pip install pandas matplotlib scikit-learn  
+Run the script from the project folder:
 
-# Run script
+```bash
 python knn_classification.py
+```
