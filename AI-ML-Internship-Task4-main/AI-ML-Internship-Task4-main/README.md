@@ -1,134 +1,94 @@
-# AI-ML-Internship-Task4
-This project demonstrates binary classification using Logistic Regression on the Breast Cancer dataset. It includes data preprocessing, model training, evaluation with confusion matrix, precision, recall, ROC-AUC, and visualization of ROC curve &amp; sigmoid function for better understanding.
+# Task 4: Logistic Regression
 
-# Logistic Regression - Binary Classification
+## Objective
+Build a Logistic Regression classification model to predict whether a breast tumor is malignant or benign using the Breast Cancer Wisconsin dataset.
 
-## 📌 Task Objective
-Build a **binary classifier** using Logistic Regression on the Breast Cancer dataset.
-
-## ⚙️ Tools Used
+## Tools and Libraries
 - Python
+- NumPy and Pandas
 - Scikit-learn
-- Pandas
-- Matplotlib
+- Matplotlib and Seaborn
 
-## 🚀 Steps Performed
-1. Loaded Breast Cancer dataset from Scikit-learn.
-2. Split data into train and test sets.
-3. Standardized features using StandardScaler.
-4. Built a Logistic Regression model.
-5. Evaluated model using:
-   - Confusion Matrix
-   - Precision, Recall, F1-score
-   - ROC-AUC Score
-6. Visualized **ROC Curve** and **Sigmoid Function**.
+## Project Workflow
+1. Load the Breast Cancer Wisconsin dataset.
+2. Explore the dataset and examine class distribution.
+3. Split the data into training and testing sets.
+4. Standardize features using `StandardScaler`.
+5. Train a Logistic Regression model.
+6. Evaluate performance using accuracy, precision, recall, F1-score, ROC-AUC, and a confusion matrix.
+7. Visualize the ROC curve, confusion matrix, and sigmoid function.
+8. Test the model with a sample prediction.
 
-## 📊 Results
-- Achieved high accuracy and ROC-AUC score.
-- Showed how logistic regression works for binary classification.
-- Explained sigmoid curve behavior.
+## Results
 
-## 📂 Files
-- `task4_logistic_regression.py` → Main code
-- `README.md` → Documentation
+| Metric | Result |
+|---|---:|
+| Accuracy | 98.25% |
+| ROC-AUC Score | 0.9954 |
+| Training Samples | 455 |
+| Testing Samples | 114 |
 
----
-✅ **Task Completed**
+### Confusion Matrix
 
-✅ Interview Questions & Answers
+```text
+[[41  1]
+ [ 1 71]]
+```
 
-1. How does logistic regression differ from linear regression?
+The model correctly classified 112 out of 114 test samples.
 
-Linear Regression predicts continuous values (e.g., house price).
+## Key Concepts
 
-Logistic Regression predicts probabilities for classification (e.g., cancer vs. no cancer).
+- **Logistic Regression:** A supervised learning algorithm used for classification.
+- **Sigmoid Function:** Converts a model's output into a value between 0 and 1.
+- **StandardScaler:** Standardizes features to improve model training.
+- **Precision:** Measures how many positive predictions are correct.
+- **Recall:** Measures how many actual positive cases are identified.
+- **ROC-AUC:** Measures how effectively a model distinguishes between classes.
+- **Confusion Matrix:** Summarizes correct and incorrect classifications.
 
-Logistic uses sigmoid function to map predictions to the range [0,1].
+## Interview Questions
 
+**1. Why is Logistic Regression used for classification?**
 
+It estimates the probability of a class and can classify observations using a decision threshold.
 
+**2. What is the sigmoid function?**
 
-2. What is the sigmoid function?
+It maps a real-valued input to a probability-like value between 0 and 1.
 
-The sigmoid function is:
+**3. Why do we use feature scaling?**
 
+Scaling puts features on comparable ranges and can help optimization converge more effectively.
 
-\sigma(z) = \frac{1}{1 + e^{-z}}
+**4. What is the difference between precision and recall?**
 
-Used in logistic regression to model probability of belonging to a class.
+Precision measures the reliability of positive predictions, while recall measures how many actual positive cases are detected.
 
+**5. What does ROC-AUC represent?**
 
+It measures the model's ability to distinguish between the two classes across different classification thresholds.
 
-3. What is precision vs recall?
+**6. What is a confusion matrix?**
 
-Precision: Out of all predicted positives, how many were correct.
+It summarizes true positives, true negatives, false positives, and false negatives.
 
+**7. Why is the train-test split important?**
 
-Precision = \frac{TP}{TP + FP}
+It evaluates how well a model generalizes to data it did not train on.
 
-Recall = \frac{TP}{TP + FN}
+**8. Why might accuracy be misleading on imbalanced data?**
 
-Recall = ability to find all positives.
+A model can achieve high accuracy by favoring the majority class while performing poorly on the minority class.
 
+## How to Run
 
+From the repository root, activate your virtual environment and run:
 
+```powershell
+python ".\AI-ML-Internship-Task4-main\AI-ML-Internship-Task4-main\task4_logistic_regression.py"
+```
 
-4. What is the ROC-AUC curve?
+## Conclusion
 
-ROC (Receiver Operating Characteristic) curve plots TPR vs FPR at different thresholds.
-
-AUC (Area Under Curve) measures classifier performance.
-
-AUC = 1 → Perfect classifier, AUC = 0.5 → Random guess.
-
-
-
-5. What is the confusion matrix?
-
-A 2×2 table showing classification results:
-
-
-	Predicted Positive	Predicted Negative
-
-Actual Positive	True Positive (TP)	False Negative (FN)
-Actual Negative	False Positive (FP)	True Negative (TN)
-
-
-Helps calculate accuracy, precision, recall, and F1 score.
-
-
-
-6. What happens if classes are imbalanced?
-
-Model may get biased toward the majority class.
-
-Metrics like accuracy become misleading.
-
-Solution: Use resampling, SMOTE, class weights, ROC-AUC, precision-recall curve.
-
-
-
-
-
-7. How do you choose the threshold?
-
-Default threshold = 0.5.
-
-Can be adjusted based on:
-
-High Recall needed → lower threshold.
-
-High Precision needed → higher threshold.
-
-
-Chosen by evaluating ROC curve or Precision-Recall curve.
-
-
-
-8. Can logistic regression be used for multi-class problems?
-
-Yes ✅
-
-Using One-vs-Rest (OvR) or Multinomial Logistic Regression (Softmax).
-
-Scikit-learn’s LogisticRegression(multi_class="multinomial") supports this.
+The Logistic Regression model achieved 98.25% accuracy and a ROC-AUC score of 0.9954 on the test set. The project demonstrates data preprocessing, feature scaling, classification, model evaluation, and visualization using Python and Scikit-learn.
