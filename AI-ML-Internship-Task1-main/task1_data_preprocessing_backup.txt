@@ -1,0 +1,78 @@
+# ------------------------------
+# AI & ML Internship - Task 1
+# Data Cleaning & Preprocessing
+# ------------------------------
+
+# Step 0: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load Dataset
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+df = pd.read_csv(url)
+
+print("🔹 First 5 rows of dataset:")
+print(df.head())
+
+print("\n🔹 Dataset Info:")
+print(df.info())
+
+print("\n🔹 Summary Statistics:")
+print(df.describe(include='all'))
+
+# Step 2: Handling Missing Values
+print("\n🔹 Missing Values Before:")
+print(df.isnull().sum())
+
+# Fill missing Age with median
+df['Age'].fillna(df['Age'].median(), inplace=True)
+
+# Fill missing Embarked with mode
+df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
+
+# Drop Cabin (too many missing values)
+df.drop(columns=['Cabin'], inplace=True)
+
+print("\n🔹 Missing Values After Handling:")
+print(df.isnull().sum())
+
+# Step 3: Encoding Categorical Features
+df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
+df = pd.get_dummies(df, columns=['Embarked'], drop_first=True)
+
+print("\n🔹 Encoded Dataset Sample:")
+print(df.head())
+
+# Step 4: Normalization / Standardization
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+num_cols = ['Age', 'Fare']
+df[num_cols] = scaler.fit_transform(df[num_cols])
+
+print("\n🔹 After Scaling:")
+print(df[num_cols].head())
+
+# Step 5: Outlier Detection & Visualization
+plt.figure(figsize=(10,5))
+
+plt.subplot(1,2,1)
+sns.boxplot(y=df['Age'])
+plt.title("Boxplot of Age")
+
+plt.subplot(1,2,2)
+sns.boxplot(y=df['Fare'])
+plt.title("Boxplot of Fare")
+
+plt.show()
+
+# Remove extreme outliers in Fare
+Q1 = df['Fare'].quantile(0.25)
+Q3 = df['Fare'].quantile(0.75)
+IQR = Q3 - Q1
+upper_limit = Q3 + 1.5 * IQR
+df = df[df['Fare'] <= upper_limit]
+
+print("\n🔹 Dataset Shape after Outlier Removal:", df.shape)

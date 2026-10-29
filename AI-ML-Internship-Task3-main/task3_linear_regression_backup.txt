@@ -1,0 +1,70 @@
+1. Import & Preprocess Dataset
+
+You can use the House Price Prediction Dataset (or any dataset with numerical features).
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# Load dataset
+data = pd.read_csv("house_prices.csv")   # change filename accordingly
+print(data.head())
+print(data.info())
+
+
+
+
+2. Split Data into Train-Test Sets
+
+# Select features (X) and target (y)
+X = data[['square_feet', 'bedrooms', 'bathrooms']]   # example features
+y = data['price']                                    # target
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+
+3. Fit Linear Regression Model
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+
+
+
+
+4. Evaluate Model
+
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print("MAE:", mae)
+print("MSE:", mse)
+print("RMSE:", rmse)
+print("R² Score:", r2)
+
+
+
+
+5. Plot Regression Line (for Simple Regression)
+
+If using 1 feature (e.g., square_feet):
+
+plt.scatter(X_test['square_feet'], y_test, color='blue')
+plt.plot(X_test['square_feet'], y_pred, color='red')
+plt.xlabel("Square Feet")
+plt.ylabel("Price")
+plt.title("Linear Regression - House Price Prediction")
+plt.show()
+
+
