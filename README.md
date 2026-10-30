@@ -1,95 +1,55 @@
 # AI & Machine Learning Internship Projects
 
-A collection of hands-on projects completed during my AI/ML internship, covering data preprocessing, exploratory data analysis, machine learning algorithms, and disease prediction.
+Six hands-on ML tasks plus a capstone-style disease outbreak prediction project, built with Python and scikit-learn.
+Every script runs end to end, saves its figures to an `outputs/` folder, and reports honest evaluation results.
 
-This repository brings together my internship tasks and practical implementations as I continue building my skills in Python, data analysis, and machine learning.
+## Projects
 
-## 📂 Projects
+| # | Project | Dataset | Key result |
+|---|---|---|---|
+| 1 | [Data Preprocessing](task1_data_preprocessing) | Titanic | Missing values, encoding, scaling, IQR outlier removal |
+| 2 | [Exploratory Data Analysis](task2_eda) | Titanic | Distributions, correlations, survival by class & sex |
+| 3 | [Linear Regression](task3_linear_regression) | Diabetes (442 patients) | R² 0.23 (simple) → 0.45 (multiple); multicollinearity found via VIF |
+| 4 | [Logistic Regression](task4_logistic_regression) | Breast Cancer Wisconsin | 98.25% accuracy, ROC-AUC 0.995 |
+| 5 | [Decision Tree & Random Forest](task5_decision_tree_random_forest) | UCI Heart Disease (297) | RF 86.7% vs tree 80.0% test; 82.6% vs 80.1% in 5-fold CV |
+| 6 | [K-Nearest Neighbors](task6_knn_classification) | Iris | 91–93% accuracy for K = 3, 5, 7 |
+| ★ | [Disease Outbreak Prediction](disease_outbreak_prediction) | **Simulated** weekly surveillance data | Time-based split, 3 models + baselines, ROC-AUC ≈ 0.97 |
 
-### Task 1 — Data Preprocessing
-Preparing raw datasets for machine learning by cleaning and transforming data.
+> The outbreak project uses a clearly-labelled **simulated** dataset (no free real outbreak dataset exists in one clean file).
+> Its pipeline accepts real data in the same format — see its README.
 
-**Key concepts:** Data cleaning, preprocessing, and feature preparation.
+## Quick start
+```bash
+git clone https://github.com/isha-devx/AI-ML-Internship.git
+cd AI-ML-Internship
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 
-### Task 2 — Exploratory Data Analysis (EDA)
-Exploring datasets to understand distributions, identify patterns, and discover insights.
+python run_all.py            # smoke-tests every project (no plot windows)
+# or run one project:
+cd task4_logistic_regression && python task4_logistic_regression.py
+```
+Tasks 1–2 download the Titanic CSV on first run and cache it next to the script.
 
-**Key concepts:** Data exploration, statistical analysis, and visualization.
+## Tech stack
+Python · pandas · NumPy · scikit-learn · matplotlib · seaborn · joblib
 
-### Task 3 — Linear Regression
-Implementing a linear regression model to explore relationships between variables and predict numerical outcomes.
+## Repository layout
+```
+AI-ML-Internship/
+├── requirements.txt
+├── run_all.py                      # runs every script, prints PASS/FAIL
+├── AI-ML-Internship-Project-Report.pdf   # full project report
+├── task1_data_preprocessing/
+├── task2_eda/
+├── task3_linear_regression/
+├── task4_logistic_regression/
+├── task5_decision_tree_random_forest/
+├── task6_knn_classification/
+└── disease_outbreak_prediction/    # data generator, training pipeline, predictor, saved model
+```
 
-**Key concepts:** Supervised learning, regression, and model evaluation.
+## Author
+**Isha Lohani** — [@isha-devx](https://github.com/isha-devx)
 
-### Task 4 — Logistic Regression
-Building a classification model using logistic regression.
-
-**Key concepts:** Classification, probability, and predictive modelling.
-
-### Task 5 — Decision Tree & Random Forest
-Exploring tree-based machine learning algorithms for predictive modelling.
-
-**Key concepts:** Decision trees, random forests, and classification.
-
-### Task 6 — K-Nearest Neighbors (KNN)
-Implementing the KNN algorithm to understand distance-based classification.
-
-**Key concepts:** Classification, distance metrics, and feature scaling.
-
-### Disease Prediction
-A machine learning project focused on predicting disease outbreaks using historical data and a classification model.
-
-**Key concepts:** Python, pandas, NumPy, scikit-learn, and Random Forest classification.
-
-> Explore the individual project folders for source code, notebooks, datasets, and task-specific documentation.
-
-## 🛠️ Tech Stack
-
-- **Language:** Python
-- **Libraries:** pandas, NumPy, scikit-learn
-- **Tools:** Jupyter Notebook, Git, and GitHub
-- **Areas:** Data preprocessing, exploratory data analysis, regression, classification, and predictive modelling
-
-*Libraries and tools may vary across individual projects.*
-
-## 🚀 Getting Started
-
-1. Clone this repository:
-
-   ```bash
-   git clone https://github.com/isha-devx/AI-ML-Internship.git
-   ```
-
-2. Navigate to the repository:
-
-   ```bash
-   cd AI-ML-Internship
-   ```
-
-3. Open the project folder you want to explore.
-
-4. For Python projects, create a virtual environment and install the dependencies listed in the relevant project's `requirements.txt`, if available.
-
-5. Run Python scripts or open Jupyter notebooks as appropriate.
-
-## 🎯 Learning Objectives
-
-- Develop practical Python programming skills.
-- Understand the machine learning workflow.
-- Explore datasets and extract meaningful insights.
-- Implement regression and classification algorithms.
-- Gain experience working with notebooks, datasets, and version control.
-
-## 📌 Note
-
-These projects were developed for learning and internship practice. Model results depend on the datasets, preprocessing steps, and evaluation methods used in each project. Disease prediction outputs should not be treated as medical advice.
-
-## 👩‍💻 Author
-
-**Isha Lohani**
-
-- GitHub: [@isha-devx](https://github.com/isha-devx)
-
----
-
-*Learning by building, experimenting, and improving — one project at a time.*
+*Built for learning and internship practice. Not medical advice.*
